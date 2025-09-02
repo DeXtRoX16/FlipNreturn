@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h1>Welcome, {{ username }}!</h1>
+                <p>Manage your book rentals and track your reading journey</p>
+            </div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ rentals|selectattr("status", "equalto", "rented")|list|length }}</h3>
+                    <p>Currently Rented</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ rentals|selectattr("status", "equalto", "returned")|list|length }}</h3>
+                    <p>Books Returned</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ rentals|length }}</h3>
+                    <p>Total Rentals</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="rental-history">
+            <h2>Your Rental History</h2>
+            {% if rentals %}
+                <div class="rental-list">
+                    {% for rental in rentals %}
+                    <div class="rental-item {% if rental.status == 'rented' %}current-rental{% endif %}">
+                        <div class="rental-book-info">
+                            <div class="book-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="book-details">
+                                <h4>{{ rental.title }}</h4>
+                                <p>by {{ rental.author }}</p>
+                            </div>
+                        </div>
+                        <div class="rental-dates">
+                            <p><strong>Issued:</strong> {{ rental.issue_date.strftime('%B %d, %Y') }}</p>
+                            <p><strong>Due:</strong> {{ rental.return_date.strftime('%B %d, %Y') }}</p>
+                            {% if rental.actual_return_date %}
+                                <p><strong>Returned:</strong> {{ rental.actual_return_date.strftime('%B %d, %Y') }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="rental-status">
+                            <span class="status-badge status-{{ rental.status }}">{{ rental.status.title() }}</span>
+                            {% if rental.status == 'rented' %}
+                                <a href="{{ url_for('return_book', rental_id=rental.id) }}" 
+                                class="btn btn-secondary btn-small">Return Book</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-rentals">
+                    <i class="fas fa-book-open no-rentals-icon"></i>
+                    <h3>No rentals yet</h3>
+                    <p>Start exploring our collection and rent your first book!</p>
+                    <a href="{{ url_for('books') }}" class="btn btn-primary">Browse Books</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

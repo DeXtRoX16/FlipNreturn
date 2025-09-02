@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="books-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Browse Our Collection</h1>
+            <p class="page-subtitle">Discover thousands of books across all genres</p>
+        </div>
+        
+        <div class="search-filters">
+            <form method="GET" class="search-form">
+                <div class="search-input-group">
+                    <input type="text" name="search" placeholder="Search books or authors..." 
+                        value="{{ request.args.get('search', '') }}" class="search-input">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <select name="category" class="category-select" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.category }}" 
+                                {% if request.args.get('category') == category.category %}selected{% endif %}>
+                            {{ category.category }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        <div class="books-grid">
+            {% for book in books %}
+            <div class="book-card animate-on-scroll">
+                <div class="book-cover">
+                    <i class="fas fa-book book-placeholder"></i>
+                    <div class="book-overlay">
+                        <p class="book-description">{{ book.description[:100] }}...</p>
+                    </div>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <p class="book-category">{{ book.category }}</p>
+                    <p class="book-price">${{ "%.2f"|format(book.rental_price) }}/week</p>
+                    {% if session.loggedin %}
+                        <a href="{{ url_for('rent_book', book_id=book.id) }}" class="btn btn-primary btn-small">Rent Now</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-small">Login to Rent</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not books %}
+        <div class="no-books">
+            <i class="fas fa-search no-books-icon"></i>
+            <h3>No books found</h3>
+            <p>Try adjusting your search criteria or browse all categories.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

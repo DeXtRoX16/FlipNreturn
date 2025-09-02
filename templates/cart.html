@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="cart-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-shopping-cart cart-icon"></i>
+                Your Cart
+            </h1>
+            <p class="page-subtitle">Review your selected books before checkout</p>
+        </div>
+
+        {% if cart_items %}
+        <div class="cart-content">
+            <div class="cart-items">
+                {% for item in cart_items %}
+                <div class="cart-item animate-on-scroll">
+                    <div class="item-image">
+                        <i class="fas fa-book book-placeholder"></i>
+                    </div>
+                    <div class="item-details">
+                        <h3 class="item-title">{{ item.title }}</h3>
+                        <p class="item-author">by {{ item.author }}</p>
+                        <p class="item-category">{{ item.category }}</p>
+                        <p class="item-description">{{ item.description[:100] }}...</p>
+                        <p class="item-added">Added on {{ item.added_date.strftime('%B %d, %Y') }}</p>
+                    </div>
+                    <div class="item-price">
+                        <span class="price">${{ "%.2f"|format(item.rental_price) }}</span>
+                        <span class="price-period">/week</span>
+                    </div>
+                    <div class="item-actions">
+                        <a href="{{ url_for('remove_from_cart', cart_id=item.cart_id) }}" 
+                        class="btn btn-danger btn-small remove-btn">
+                            <i class="fas fa-trash"></i> Remove
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Cart Summary</h3>
+                    <div class="summary-details">
+                        <div class="summary-row">
+                            <span>Total Books:</span>
+                            <span class="summary-value">{{ cart_items|length }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Rental Period:</span>
+                            <span class="summary-value">2 weeks each</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span>Total Cost:</span>
+                            <span class="total-price">${{ "%.2f"|format(total_price) }}</span>
+                        </div>
+                    </div>
+                    <div class="checkout-actions">
+                        <a href="{{ url_for('checkout') }}" class="btn btn-primary checkout-btn">
+                            <i class="fas fa-credit-card"></i> Checkout All Books
+                        </a>
+                        <a href="{{ url_for('books') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Continue Shopping
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p>Discover amazing books and add them to your cart to get started!</p>
+            <a href="{{ url_for('books') }}" class="btn btn-primary">
+                <i class="fas fa-search"></i> Browse Books
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

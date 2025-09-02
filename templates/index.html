@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="hero-title">Welcome to <span class="highlight">FlipNReturn</span></h1>
+            <p class="hero-subtitle">Discover amazing books, rent them instantly, and return when you're done. Your literary journey starts here!</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('books') }}" class="btn btn-primary">Browse Books</a>
+                {% if not session.loggedin %}
+                    <a href="{{ url_for('register') }}" class="btn btn-secondary">Join Now</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="hero-animation">
+            <div class="floating-books">
+                <div class="floating-book book1"><i class="fas fa-book"></i></div>
+                <div class="floating-book book2"><i class="fas fa-book-open"></i></div>
+                <div class="floating-book book3"><i class="fas fa-bookmark"></i></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Why Choose FlipNReturn?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Easy Discovery</h3>
+                <p>Find your next favorite book with our advanced search and recommendation system.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Instant Rental</h3>
+                <p>Rent books instantly and start reading right away. No waiting, no hassle.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-undo"></i>
+                </div>
+                <h3>Simple Returns</h3>
+                <p>Return books with just a click. Track your rental history and manage everything online.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if books %}
+<section class="featured-books">
+    <div class="container">
+        <h2 class="section-title">Featured Books</h2>
+        <div class="books-grid">
+            {% for book in books %}
+            <div class="book-card">
+                <div class="book-cover">
+                    <i class="fas fa-book book-placeholder"></i>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">by {{ book.author }}</p>
+                    <p class="book-category">{{ book.category }}</p>
+                    <p class="book-price">${{ "%.2f"|format(book.rental_price) }}/week</p>
+                    {% if session.loggedin %}
+                        <a href="{{ url_for('rent_book', book_id=book.id) }}" class="btn btn-primary btn-small">Rent Now</a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="btn btn-primary btn-small">Login to Rent</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}
